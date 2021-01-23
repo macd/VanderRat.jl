@@ -1,0 +1,13 @@
+name = "VanderRat"
+uuid = "0a7674c4-e274-492c-8a8c-4ce0dfc396f3"
+authors = ["Don MacMillen"]
+version = "0.1.0"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[compat]
+julia = "1.5"
+
+[targets]
+test = ["Test"]
