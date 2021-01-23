@@ -1,6 +1,9 @@
 using VanderRat
 using Test
+using LinearAlgebra
+
+include("tests.jl")
 
 @testset "VanderRat.jl" begin
-    # Write your tests here.
+    @test bivartest()
 end
