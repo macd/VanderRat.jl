@@ -25,10 +25,17 @@
 # One of the functions from the paper
 nvarf(x) = exp(prod(x)) / prod([(y^2 - 1.44) for y in x])
 
-function bivartest()
-    x = rand(1000, 2)
+function nvartest(;k=1000, n=2, M=20, N=20)
+    x = rand(k, n)
     f = nvarf.(eachrow(x))
-    vf = VanderRat.vrfit(x, f, 20, 18)
-    xx = rand(2);
-    return norm(nvarf(xx) - vrval(xx, vf)) < 1.0e-12
+    vf = VanderRat.vrfit(x, f, M, N)
+    xx = rand(n)
+    return abs(nvarf(xx) - vrval(xx, vf))
+end
+
+function doreduce(;k=1000, n=2, M=20, N=20, eta=1e-12)
+    x = rand(k, n)
+    f = nvarf.(eachrow(x))
+    vf = VanderRat.vrfit(x, f, M, N)
+    return degreduce(vf.VL, f, M, N, n, eta=eta)
 end

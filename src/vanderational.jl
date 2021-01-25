@@ -1,6 +1,8 @@
 
 # x is the matrix of K n-space points of dimension (K, n)
 # L is the max degree monomial
+# TODO: This still need reorthogonalization (However, for the smaller
+# examples that I have looked it, it already seems pretty ortho-normal)
 function vandermat(x::Matrix{T}, L::Int) where {T}
     K, n = size(x)
     U = binomial(n + L, L)
@@ -58,11 +60,11 @@ function vrfit(x, f, M, N)
     G = svd(W)
     b = G.Vt[end, :]
     a = Z * b
-    return VanderFit(VL, RL, M, N, a, b)
+    return VanderFit(VL, RL, M, N, a, b, M, N, n, f)
 end
 
 
-function veval(x::Vector{T}, c::Vector{T}, r::Matrix{T}, L::Int) where {T}
+function veval(x::AbstractVector{T}, c::AbstractVector{T}, r::AbstractMatrix{T}, L::Int) where {T}
     n = length(x)
     U = binomial(n + L, L)
 
@@ -91,7 +93,7 @@ function veval(x::Vector{T}, c::Vector{T}, r::Matrix{T}, L::Int) where {T}
 end
 
 
-function vrval(x::Vector{T}, vf::VanderFit{T}) where {T}
+function vrval(x::AbstractVector{T}, vf::VanderFit{T}) where {T}
     n = veval(x, vf.a, vf.RL, vf.M)
     d = veval(x, vf.b, vf.RL, vf.N)
     return n / d

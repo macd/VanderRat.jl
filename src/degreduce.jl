@@ -1,13 +1,14 @@
-
-
 # recall that L = max(M, N)
-function degreduce(VL, f, M, N, eta=1e-12)
-    
+#function calcreduce(VL::AbstractMatrix{T}, f::AbstractVector{T}, M, N, n; eta=1e-12) where {T}
+function calcreduce(vf::VanderFit; eta=1e-12) where {T}
+    UM = binomial(vf.Mmax + vf.n, vf.Mmax)
+    UN = binomial(vf.Nmax + vf.n, vf.Nmax)
     # Reduce denominator degree
-    FVN = md(f, VL[:, 1:N])
-    MT = M
+    FVN = Diagonal(f) * vf.VL[:, 1:UN]
+    MT = vf.Mmax
     while true
-        @views u, s, vt = svd(VL[:, 1:MT-1]' * FVN)
+        UMT1 = binomial(MT-1+n, MT-1)
+        @views u, s, vt = svd(VL[:, 1:UMT1]' * FVN)
         smin, smax = extrema(s)
         println("d: ", smin, "  ", smax, "   ", MT)
         if smin < eta * smax
@@ -17,11 +18,13 @@ function degreduce(VL, f, M, N, eta=1e-12)
         end
     end
     
-    # Reduce numerator degree
-    FIVM = md(f .^ -1, VL[:, 1:M])
-    NT = N
+    # Reduce numerator degree using the new VM
+    UMT = binomial(MT+n, MT)
+    FIVM = Diagonal(f .^ -1) * VL[:, 1:UMT]
+    NT = vf.Nmax
     while true
-        @views u, s, vt = svd(VL[:, 1:NT-1]' * FIVM)
+        UNT1 = binomial(NT-1+n, NT-1)
+        @views u, s, vt = svd(VL[:, UNT1]' * FIVM)
         smin, smax = extrema(s)
         println("n: ", smin, "  ", smax, "   ", NT)
         if smin < eta * smax
@@ -32,4 +35,26 @@ function degreduce(VL, f, M, N, eta=1e-12)
     end
 
     return MT, NT
+end
+
+function degreduce!(vf, M, N)
+    if M > vf.M || N > vf.N
+        println("Error: Trying to resize to larger degree")
+        return nothing
+    end
+    UM = binomial(vf.n + M, M)
+    UN = binomial(vf.n + N, N)
+
+    VM, RM = (view(vf.VL, :, 1:UM), view(vf.RL, :, 1:UM))
+    VN, RN = (view(vf.VL, :, 1:UN), view(vf.RL, :, 1:UN))
+    
+    fVN = Diagonal(vf.f) * VN
+    Z = pinv(VM) * fVN
+    W = VM * Z - fVN
+    G = svd(W)
+    vf.b = G.Vt[end, :]
+    vf.a = Z * vf.b
+    vf.M = M
+    vf.N = N
+    nothing
 end

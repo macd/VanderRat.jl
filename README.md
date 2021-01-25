@@ -5,5 +5,5 @@
 
 This package is a Julia implementation of the algorithms presented the
 paper **Practical algorithms for multivariate rational approximation**
-by Austin, Krishnamoorthy, Leyffer, Stephen Mrenna, Juliane Müller,
-and Holger Schulz [https://doi.org/10.1016/j.cpc.2020.107663]
+by Austin, Krishnamoorthy, Leyffer, Mrenna, Müller,
+and Schulz [https://doi.org/10.1016/j.cpc.2020.107663]
