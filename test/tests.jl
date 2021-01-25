@@ -33,9 +33,14 @@ function nvartest(;k=1000, n=2, M=20, N=20)
     return abs(nvarf(xx) - vrval(xx, vf))
 end
 
-function doreduce(;k=1000, n=2, M=20, N=20, eta=1e-12)
+# test that degreduce! actually does something
+function doreduce()
+    k=1000; n=2; M=20; N=20
     x = rand(k, n)
     f = nvarf.(eachrow(x))
     vf = VanderRat.vrfit(x, f, M, N)
-    return degreduce(vf.VL, f, M, N, n, eta=eta)
+    vff = VanderFit(vf)
+    degreduce!(vff, 12, 9)
+    xx = 2 .* rand(2) .- 1.0
+    return abs(nvarf(xx) - vrval(xx, vff))
 end
