@@ -1,4 +1,5 @@
 using LinearAlgebra
+using Random
 using VanderRat
 using PyPlot
 
@@ -16,11 +17,15 @@ function meshgrid(x)
     return meshgrid(x, reverse(x))
 end
 
-function finst(;k=1000, n=2, M=20, N=20)
+function finst(;k=1000, n=2, M=20, N=20, seed=nothing)
+    if seed === nothing
+        seed = rand(0:99999)
+    end
+    Random.seed!(seed)
     x = 2*rand(k, n) .- 1.0
     ff = nvarf.(eachrow(x))
     vf = VanderRat.vrfit(x, ff, M, N)
-    show_contrs(vf)
+    show_contrs(vf, seed)
     
     # readline()
     # vff = VanderFit(vf)
@@ -32,10 +37,31 @@ function finst(;k=1000, n=2, M=20, N=20)
     # println(nvarf(xx), "  ", vrval(xx, vf), "   ", vrval(xx, vff))
 end
 
-function show_contrs(vf)
+
+function fcheb(;k=32, n=2, M=20, N=20)
+    x = VanderRat.chebpts(k)
+    xx, yy = meshgrid(x)
+    zz = [vec(xx) vec(yy)]
+    ff = nvarf.(eachrow(zz))
+    vf = VanderRat.vrfit(zz, ff, M, N)
+    show_contrs(vf, k)
+    
+    # readline()
+    # vff = VanderFit(vf)
+    # degreduce!(vff, 12, 9)
+    # show_contrs(vff)
+
+    # # the values at a random test point
+    # xx = rand(n)
+    # println(nvarf(xx), "  ", vrval(xx, vf), "   ", vrval(xx, vff))
+end
+
+function show_contrs(vf, seed)
     f(x) = veval(x, vf.b, vf.RL, vf.N)
     g(x) = veval(x, vf.a, vf.RL, vf.M)
     r = [-1.4:0.005:1.4;]
+    #r = [-1.8:0.005:1.8;] .+ 2.0
+    #r = [-4:0.005:4;]
     n = length(r)
     xx, yy = meshgrid(r)
 
@@ -47,6 +73,8 @@ function show_contrs(vf)
     ZG = g.(eachrow(zz))
     ZG = reshape(ZG, n, n)
     
-    contour(xx, yy, ZF, [0.0])
-    contour(xx, yy, ZG, [0.0])
+    contour(xx, yy, ZF, [0.0], colors="r")
+    contour(xx, yy, ZG, [0.0], colors="g", alpha=0.5)
+    title("Numerator and denominator zeros with seed $seed")
+    xlabel("Red: denominator     Green: numerator     Brown: overlapped")
 end

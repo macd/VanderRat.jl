@@ -12,7 +12,7 @@ N=20
 x = 2*rand(k, n) .- 1.0
 ff = nvarf.(eachrow(x))
 
-@btime vf = VanderRat.vrfit($x, $ff, M, N);
+@btime vf = VanderRat.vrfit($x, $ff, $M, $N);
 
 #=
 julia @v1.7> include("perform.jl")

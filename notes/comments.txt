@@ -27,8 +27,20 @@ Overall an interesting paper, but some things I think could be better
    could still pose some numerical challenges for optimization software,
    I think that would need to be investigated and reported.
 
+   Now, it may be true that even if the zeros of p(x) and q(x) match, and
+   are of the same degree, then the derivative of r(x) can have poles at
+   the zeros of q(x).  You do need accurate derivative for optimization,
+   so this could be a problem.
+
    Also, for these experiments, I always got singular values for the Z
    matrix ( $V_{M-1}^* F V_{N}$ ) that were only about an order of
    magnitude apart so that Algorithm 3.3 (Degree Reduction) could never
    reduce the degree below (20, 20).  However, if I manually reset the
    degree to (12, 9) I could reproduce the results of Figure 1.
+
+Finally looking at the (20,20) approximation for exp(x*y)/((x^2 -
+1.44)*(y^2 - 1.44)) for every random sampling of 1000 (x,y) points in
+[-1,1]x[-1,1] the zeros of the denominator were matched by zeros of
+the numerator inside of [-1.2,1.2]x[-1.2,1.2] I did not find a single
+case where there was an actual spurious pole.  I must have generated
+dozens of them, too.
