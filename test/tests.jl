@@ -25,22 +25,38 @@
 # One of the functions from the paper
 nvarf(x) = exp(prod(x)) / prod([(y^2 - 1.44) for y in x])
 
+# Random sample points and random test points. What's the worry?
 function nvartest(;k=1000, n=2, M=20, N=20)
     x = rand(k, n)
     f = nvarf.(eachrow(x))
     vf = VanderRat.vrfit(x, f, M, N)
-    xx = rand(n)
-    return abs(nvarf(xx) - vrval(xx, vf))
+    # test at 5 random locations
+    xx = rand(5, n)
+    return maximum(abs.(nvarf.(eachrow(xx)) - vrval.(eachrow(xx), (vf,))))
 end
 
 # test that degreduce! actually does something
 function doreduce()
-    k=1000; n=2; M=20; N=20
+    k=10000; n=2; M=20; N=20
     x = rand(k, n)
     f = nvarf.(eachrow(x))
     vf = VanderRat.vrfit(x, f, M, N)
     vff = VanderFit(vf)
-    degreduce!(vff, 12, 9)
-    xx = 2 .* rand(2) .- 1.0
+    M, N = calcreduce(vff)
+    println("M: ", M, "  N: ", N)
+
+    xx = rand(2)
+
+    # println("\nOriginal 20, 20")
+    # println(abs(nvarf(xx) - vrval(xx, vff)))
+    
+    # println("\nreducing to 12, 9")
+    # degreduce!(vff, 12, 9)
+    # println(abs(nvarf(xx) - vrval(xx, vff)))
+
+    # println("\nreducing to 8, 6")
+    degreduce!(vff, 8, 6)
+    #println(abs(nvarf(xx) - vrval(xx, vff)))
+    
     return abs(nvarf(xx) - vrval(xx, vff))
 end
