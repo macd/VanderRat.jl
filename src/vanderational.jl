@@ -56,7 +56,7 @@ end
 # f is the K vector of values of the funcion at the x locations
 # M is the degree of the numerator and N is the degree of the denominator
 function vrfit(x, f, M, N)
-    _, n = size(x)
+    k, n = size(x)
     Lmin, Lmax = extrema([M, N])
     VL, RL = vandermat(x, Lmax)
     U = binomial(n + Lmin, Lmin)
@@ -74,12 +74,13 @@ function vrfit(x, f, M, N)
     G = svd(W)
     b = G.Vt[end, :]
     a = Z * b
-    return VanderFit(VL, RL, M, N, a, b, M, N, n, f)
+    return VanderFit(VL, RL, M, N, a, b, M, N, n, f, k)
 end
 
 # Algorithm 3.2 for evaluating the polynomials. It is sort of a generalized
 # Clenshaw algorithm.
-function veval(x::AbstractVector{T}, c::W, r::AbstractMatrix{T}, L::Int) where {T, W <: AbstractVector{T}}
+function veval(x::AbstractVector{T}, c::W, r::AbstractMatrix{T},
+               L::Int, K) where {T, W <: AbstractVector{T}}
     n = length(x)
     U = binomial(n + L, L)
 
@@ -87,7 +88,7 @@ function veval(x::AbstractVector{T}, c::W, r::AbstractMatrix{T}, L::Int) where {
     I = ones(Int, n+1)
 
     y = Vector{T}(undef, U)
-    y[1] = one(T)
+    y[1] = inv(sqrt(T(K)))
     
     @inbounds for d in 1:L
         for j in 1:n
@@ -110,7 +111,7 @@ end
 
 # x is a single point in n space
 function vrval(x::AbstractVector{T}, vf::VanderFit{T}) where {T}
-    n = veval(x, vf.a, vf.RL, vf.M)
-    d = veval(x, vf.b, vf.RL, vf.N)
+    n = veval(x, vf.a, vf.RL, vf.M, vf.K)
+    d = veval(x, vf.b, vf.RL, vf.N, vf.K)
     return n / d
 end

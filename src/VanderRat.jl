@@ -11,22 +11,23 @@ export VanderFit, vandermat, vrfit, veval, vrval, calcreduce, chebpts,
 # However, it is needed when we reduce the size of the polynomials so we can
 # recalculate a and b.
 mutable struct VanderFit{T}
-    VL::Matrix{T}   # we only save this for resizing M and N
-    RL::Matrix{T}   # recursion matrix
-    M::Int          # (current) order of numerator
-    N::Int          # (current) order of denominator
-    a::Vector{T}    # numerator coefs for size M, N
-    b::Vector{T}    # denominator coefs for size M, N
-    Mmax::Int       # M of first created VanderFit 
-    Nmax::Int       # N of first created VanderFit 
-    n::Int          # vector dimension. Needed for resizing
-    f::Vector{T}    # function values.  Needed for resizing
+    VL::AbstractMatrix{T}   # we only save this for resizing M and N
+    RL::AbstractMatrix{T}   # recursion matrix
+    M::Int                  # (current) order of numerator
+    N::Int                  # (current) order of denominator
+    a::AbstractVector{T}    # numerator coefs for size M, N
+    b::AbstractVector{T}    # denominator coefs for size M, N
+    Mmax::Int               # M of first created VanderFit 
+    Nmax::Int               # N of first created VanderFit 
+    n::Int                  # vector dimension. Needed for resizing
+    f::AbstractVector{T}    # function values.  Needed for resizing
+    K::Int                  # maybe redundant
 end
 
 # Copy constructor
 function VanderFit(vf::VanderFit)
     VanderFit(vf.VL, vf.RL, vf.M, vf.N, copy(vf.a), copy(vf.b),
-              vf.Mmax, vf.Nmax, vf.n, copy(vf.f))
+              vf.Mmax, vf.Nmax, vf.n, copy(vf.f), vf.K)
 end
 
 include("utils.jl")

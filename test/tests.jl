@@ -22,17 +22,17 @@
 #     println(exp(prod(xx)), "   ", vrval(xx, vf))
 # end
 
-# One of the functions from the paper
-nvarf(x) = exp(prod(x)) / prod([(y^2 - 1.44) for y in x])
 
 # Random sample points and random test points. What's the worry?
-function nvartest(;k=1000, n=2, M=20, N=20)
-    x = rand(k, n)
-    f = nvarf.(eachrow(x))
+# when n=3, error is a min at M=N=11 (only tested M=N) Error gets
+# larger for higher orders eventually triggering a rank deficient error
+function nvartest(func; llim=-1.0, ulim=1.0, k=1000, n=2, M=20, N=20)
+    x = llim .+ (ulim - llim)*rand(k, n)
+    f = func.(eachrow(x))
     vf = VanderRat.vrfit(x, f, M, N)
     # test at 5 random locations
-    xx = rand(5, n)
-    return maximum(abs.(nvarf.(eachrow(xx)) - vrval.(eachrow(xx), (vf,))))
+    xx = llim .+ (ulim - llim)*rand(5, n)
+    return maximum(abs.(func.(eachrow(xx)) - vrval.(eachrow(xx), (vf,))))
 end
 
 # test that degreduce! actually does something

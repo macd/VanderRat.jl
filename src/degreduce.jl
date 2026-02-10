@@ -1,7 +1,7 @@
 
 # Algorithm 3.3 Degree Reduction. This just calculates the new, lower degrees.
-# See the comments on p. 10 for choosing eta. They note that it should be a factor of
-# 10 greater than the noise in the data.
+# See the comments on p. 10 for choosing eta. They note that it should be 
+# a factor of 10 greater than the noise in the data.
 function calcreduce(vf::VanderFit, ::Type{T}=Float64; eta=1e-12) where {T <: AbstractFloat}
     UM = binomial(vf.Mmax + vf.n, vf.Mmax)
     UN = binomial(vf.Nmax + vf.n, vf.Nmax)
