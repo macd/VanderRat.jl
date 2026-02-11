@@ -6,10 +6,26 @@
 function vandermat(x::AbstractMatrix{T}, L::Int) where {T}
     K, n = size(x)
     U = binomial(n + L, L)
-    
+    if U > K
+        @warn """
+              vrfit: underdetermined polynomial basis detected.
+
+              dimension n           = $n
+              requested Lmax        = $L
+              basis size U          = $U
+              number of samples K   = $K
+
+              Since U > K, the sampled Vandermonde matrix cannot have full column rank.
+              The rational fit will be underdetermined and may exhibit large errors.
+
+              Suggested remedies:
+                • Increase K (recommend at least K ≥ 2U for stability)
+                • Decrease max(M,N)
+              """
+    end
     i = 2
     I = ones(Int, n+1)
-        
+
     Q = Matrix{T}(undef, K, U)
     r = zeros(T, U, U)
     r[1, 1] = one(T)
