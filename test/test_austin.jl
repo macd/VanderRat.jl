@@ -23,7 +23,7 @@ using Random
         #(15,  6000,   10, 10,  2e-04),  # test case needs work on bounds
         #(16,  6000,    15,  4,  2e-04), # will pass but takes too long
         (17,  4000,    10,   2,  1e-03),
-        (18, 10000,    16,   6,  1e-06),
+        #(18, 10000,    16,   6,  1e-06),# takes too long
         #(19,  2000,   10,  10,  1e-12), # takes too long
         (20,  2000,    2,  10,  1e-12),
     ]

@@ -1,6 +1,9 @@
 module VanderRat
 using LinearAlgebra
 
+# probably don't need to export all of these, but if interested in
+# the numerator and denominator separately of the rational polynomial
+# then we do need veval
 export VanderFit, vandermat, vrfit, veval, vrval, calcreduce, chebpts,
        degreduce!, polyfitA, polyvalA, polyfitD, polyvalD
 
@@ -21,13 +24,12 @@ mutable struct VanderFit{T}
     Nmax::Int               # N of first created VanderFit 
     n::Int                  # vector dimension. Needed for resizing
     f::AbstractVector{T}    # function values.  Needed for resizing
-    K::Int                  # maybe redundant
 end
 
 # Copy constructor
 function VanderFit(vf::VanderFit)
     VanderFit(vf.VL, vf.RL, vf.M, vf.N, copy(vf.a), copy(vf.b),
-              vf.Mmax, vf.Nmax, vf.n, copy(vf.f), vf.K)
+              vf.Mmax, vf.Nmax, vf.n, copy(vf.f))
 end
 
 include("utils.jl")

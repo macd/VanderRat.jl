@@ -7,7 +7,7 @@ function vandermat(x::AbstractMatrix{T}, L::Int) where {T}
     K, n = size(x)
     U = binomial(n + L, L)
     if U > K
-        @warn """
+       @error """
               vrfit: underdetermined polynomial basis detected.
 
               dimension n           = $n
@@ -16,7 +16,7 @@ function vandermat(x::AbstractMatrix{T}, L::Int) where {T}
               number of samples K   = $K
 
               Since U > K, the sampled Vandermonde matrix cannot have full column rank.
-              The rational fit will be underdetermined and may exhibit large errors.
+              The rational fit will fail because of rank deficiency.
 
               Suggested remedies:
                 • Increase K (recommend at least K ≥ 2U for stability)
@@ -39,12 +39,6 @@ function vandermat(x::AbstractMatrix{T}, L::Int) where {T}
             for k in I[j]:I[n+1]
                 q .= x[:, j] .* Q[:, k]
 
-                # My original version
-                # for l in 1:i-1
-                #     r[l, i] = Q[:, l]' * q
-                #     q .= q - r[l, i] * Q[:, l]
-                # end
-
                 # 2 rounds of Orthogonalization
                 for t in 1:2
                     s[1:i-1] .= Q[:, 1:i-1]' * q
@@ -53,6 +47,7 @@ function vandermat(x::AbstractMatrix{T}, L::Int) where {T}
                 end
                 
                 r[i, i] = norm(q)
+                # so this test is still necessary
                 if isapprox(r[i, i], zero(T), atol=1e-12)
                     error("vandermat: x is near rank deficient")
                 end
@@ -90,7 +85,7 @@ function vrfit(x, f, M, N)
     G = svd(W)
     b = G.Vt[end, :]
     a = Z * b
-    return VanderFit(VL, RL, M, N, a, b, M, N, n, f, k)
+    return VanderFit(VL, RL, M, N, a, b, M, N, n, f)
 end
 
 # Algorithm 3.2 for evaluating the polynomials. It is sort of a generalized
@@ -127,7 +122,7 @@ end
 
 # x is a single point in n space
 function vrval(x::AbstractVector{T}, vf::VanderFit{T}) where {T}
-    n = veval(x, vf.a, vf.RL, vf.M, vf.K)
-    d = veval(x, vf.b, vf.RL, vf.N, vf.K)
+    n = veval(x, vf.a, vf.RL, vf.M, length(vf.f))
+    d = veval(x, vf.b, vf.RL, vf.N, length(vf.f))
     return n / d
 end
