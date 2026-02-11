@@ -151,7 +151,7 @@ the rational polynomial to (12,9). The 9 is still much more than is
 needed but we see now that all but the explicit zeros of the denominator
 have been taken care of:
 
-![image](zeros_example_reduced.png)
+![image](images/zeros_example_reduced.png)
 
 
 ## Notes
