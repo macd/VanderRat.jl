@@ -144,14 +144,16 @@ given a denominator order of 20. But also with that high an order,
 we see an interesting pattern of denominator zeros that are exactly
 cancelled out by numerator zeros. This is a recurring pattern in 
 many rational approximations and is explicitly relied on in the
-barycentric forms of approximation. (ATAP reference ?)
+barycentric forms of approximation. [4]
 
 We can use the degree reduction algorithm to reduce the degree of 
 the rational polynomial to (12,9). The 9 is still much more than is
-needed but we see now that all but the explicit zeros of the denominator
-have been taken care of:
+needed but we see now that all of the implicitly found zeros of 
+the denominator have been moved out of the range of interest:
 
 ![image](images/zeros_example_reduced.png)
+
+
 
 
 ## Notes
@@ -168,8 +170,14 @@ This package also contains an implementation of [Vandermonde with Arnoldi](https
 
 ## References
 
-[1] [Practical algorithms for multivariate rational approximation](https://doi.org/10.1016/j.cpc.2020.107663)
+[1] 
 
-[2] [Vandermonde with Arnoldi](https://epubs.siam.org/doi/pdf/10.1137/19M130100X)
+<a name="ref1"></a>[1] [Practical algorithms for multivariate rational approximation](https://doi.org/10.1016/j.cpc.2020.107663)
 
+
+<a name="ref2"></a>[2] [Vandermonde with Arnoldi](https://epubs.siam.org/doi/pdf/10.1137/19M130100X)
+
+<a name="ref3"></a>[3] [On the Loewner Framework, the Kolmogorov  Superposition Theorem, and the Curse of Dimensionality](https://arxiv.org/pdf/2405.00495)
+
+<a name="ref=4"></a>[4] [Approximation Theory and Approximation Practice](https://epubs.siam.org/doi/book/10.1137/1.9781611975949?PubTypeOr=105&PubTypeOr=109&enableConditionalBoosting=true&pt=book&=)
 
